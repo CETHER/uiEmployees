@@ -15,6 +15,7 @@ export class Employee extends Component {
       dateOfJoining: "",
       photoFileName: "anonymus.png",
       photoPath: variables.PHOTO_URL,
+      newDate: "",
     };
   }
 
@@ -56,6 +57,7 @@ export class Employee extends Component {
   }
 
   editClick(employee) {
+    employee.date_of_joining = this.convertDate(employee.date_of_joining);
     this.setState({
       modalTitle: "Edit Employee",
       employeeId: employee.id,
@@ -143,9 +145,36 @@ export class Employee extends Component {
     }
   }
 
+  convertDate(date) {
+    let d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  }
+
   componentDidMount() {
     this.refreshList();
   }
+
+  imageUpload = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("file", e.target.files[0], e.target.files[0].name);
+    fetch(variables.API_URL + "employee/savefile", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ photoFileName: data });
+      });
+  };
 
   render() {
     const {
@@ -189,7 +218,7 @@ export class Employee extends Component {
                 <td>{employee.id}</td>
                 <td>{employee.name}</td>
                 <td>{employee.department}</td>
-                <td>{employee.date_of_joining}</td>
+                <td>{this.convertDate(employee.date_of_joining)}</td>
                 <td>
                   <button
                     type="button"
@@ -295,6 +324,11 @@ export class Employee extends Component {
                       width="250px"
                       height="250px"
                       src={photoPath + photoFileName}
+                    />
+                    <input
+                      className="m-2"
+                      type="file"
+                      onChange={this.imageUpload}
                     />
                   </div>
                 </div>

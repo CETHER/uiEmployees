@@ -13,7 +13,7 @@ function App() {
         <nav className="navbar navbar-expand-sm bg-light navbar-dark">
           <ul className="navbar-nav">
             <li className="nav-item m-1">
-              <NavLink className="btn bnt-light btn-outline-primary" to="/home">
+              <NavLink className="btn bnt-light btn-outline-primary" to="/">
                 Home
               </NavLink>
             </li>
@@ -37,7 +37,7 @@ function App() {
         </nav>
 
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/department" element={<Department />} />
           <Route path="/employee" element={<Employee />} />
         </Routes>
