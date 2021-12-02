@@ -16,14 +16,80 @@ export class Employee extends Component {
       photoFileName: "anonymus.png",
       photoPath: variables.PHOTO_URL,
       newDate: "",
+
+      employeeIdFilter: "",
+      employeeNameFilter: "",
+      departmentFilter: "",
+      dateOfJoiningFilter: "",
+      employeesWithoutFilter: [],
     };
   }
+
+  filterFn() {
+    let employeeIdFilter = this.state.employeeIdFilter;
+    let employeeNameFilter = this.state.employeeNameFilter;
+    let departmentFilter = this.state.departmentFilter;
+    let dateOfJoiningFilter = this.state.dateOfJoiningFilter;
+    let filteredData = this.state.employeesWithoutFilter.filter((el) => {
+      return (
+        el.id
+          .toString()
+          .toLowerCase()
+          .includes(employeeIdFilter.toString().trim().toLowerCase()) &&
+        el.name
+          .toString()
+          .toLowerCase()
+          .includes(employeeNameFilter.toString().trim().toLowerCase()) &&
+        el.department
+          .toString()
+          .toLowerCase()
+          .includes(departmentFilter.toString().trim().toLowerCase()) &&
+        el.date_of_joining
+          .toString()
+          .toLowerCase()
+          .includes(dateOfJoiningFilter.toString().trim().toLowerCase())
+      );
+    });
+    this.setState({ employees: filteredData });
+  }
+
+  sortResult(prop, asc) {
+    const sortedData = this.state.employeesWithoutFilter.sort((a, b) => {
+      if (asc) {
+        return a[prop] > b[prop] ? 1 : a[prop] < b[prop] ? -1 : 0;
+      } else {
+        return b[prop] > a[prop] ? 1 : b[prop] < a[prop] ? -1 : 0;
+      }
+    });
+
+    this.setState({ employees: sortedData });
+  }
+
+  changeEmployeeIdFilter = (e) => {
+    this.state.employeeIdFilter = e.target.value;
+    this.filterFn();
+  };
+
+  changeEmployeeNameFilter = (e) => {
+    this.state.employeeNameFilter = e.target.value;
+    this.filterFn();
+  };
+
+  changeDepartmentFilter = (e) => {
+    this.state.departmentFilter = e.target.value;
+    this.filterFn();
+  };
+
+  changeDateOfJoiningFilter = (e) => {
+    this.state.dateOfJoiningFilter = e.target.value;
+    this.filterFn();
+  };
 
   refreshList() {
     fetch(variables.API_URL + "employee")
       .then((response) => response.json())
       .then((data) => {
-        this.setState({ employees: data });
+        this.setState({ employees: data, employeesWithoutFilter: data });
       });
 
     fetch(variables.API_URL + "department")
@@ -205,10 +271,178 @@ export class Employee extends Component {
         <table className="table table-striped">
           <thead>
             <tr>
-              <th>EmployeeId</th>
-              <th>EmployeeName</th>
-              <th>Department</th>
-              <th>DOJ</th>
+              <th>
+                <div className="d-flex flex-row">
+                  <input
+                    className="form-control m2"
+                    onChange={this.changeEmployeeIdFilter}
+                    placeholder="Filter"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("id", true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-down-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("id", false)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-up-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                    </svg>
+                  </button>
+                </div>
+                EmployeeId
+              </th>
+              <th>
+                <div className="d-flex flex-row">
+                  <input
+                    className="form-control m2"
+                    onChange={this.changeEmployeeNameFilter}
+                    placeholder="Filter"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("name", true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-down-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("name", false)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-up-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                    </svg>
+                  </button>
+                </div>
+                EmployeeName
+              </th>
+              <th>
+                <div className="d-flex flex-row">
+                  <input
+                    className="form-control m2"
+                    onChange={this.changeDepartmentFilter}
+                    placeholder="Filter"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("department", true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-down-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("department", false)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-up-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                    </svg>
+                  </button>
+                </div>
+                Department
+              </th>
+              <th>
+                <div className="d-flex flex-row">
+                  <input
+                    className="form-control m2"
+                    onChange={this.changeDateOfJoiningFilter}
+                    placeholder="Filter"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("date_of_joining", true)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-down-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => this.sortResult("date_of_joining", false)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-up-square-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                    </svg>
+                  </button>
+                </div>
+                DOJ
+              </th>
               <th>Options</th>
             </tr>
           </thead>
